@@ -1,0 +1,40 @@
+
+.header {
+  height: 75px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 18px;
+
+  background: #fff;
+
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+
+  z-index: 5;
+}
+
+.header h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.header span {
+  color: #888;
+  font-size: 13px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #f4f5f7;
+
+  cursor: pointer;
+
+  font-size: 18px;
+}

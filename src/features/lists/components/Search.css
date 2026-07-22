@@ -1,0 +1,31 @@
+
+.search-area {
+  padding: 14px 18px;
+
+  background: white;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+
+  background: #f3f5f8;
+
+  border-radius: 14px;
+
+  padding: 12px 15px;
+}
+
+.search-box i {
+  color: #999;
+  margin-right: 10px;
+}
+
+.search-box input {
+  border: none;
+  background: none;
+  width: 100%;
+  outline: none;
+
+  font-size: 15px;
+}

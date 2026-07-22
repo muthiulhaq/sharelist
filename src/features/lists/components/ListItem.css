@@ -1,0 +1,53 @@
+.card {
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 14px 16px;
+
+  margin-bottom: 14px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.card-info h3 {
+  font-size: 15px;
+
+  margin-bottom: 6px;
+}
+
+.card-info p {
+  color: #888;
+
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #f5f6f8;
+
+  cursor: pointer;
+
+  color: #555;
+}
+
+.delete {
+  color: #ef4444 !important;
+}
