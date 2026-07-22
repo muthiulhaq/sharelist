@@ -1,9 +1,6 @@
 import type { IListItem } from "../../../types";
-import BottomNav from "../components/BottomNav";
-import Header from "../components/Header";
+
 import ListItem from "../components/ListItem";
-import NewListButton from "../components/NewListButton";
-import Search from "../components/Search";
 import "./List.css";
 
 const List = () => {
@@ -71,22 +68,17 @@ const List = () => {
   ];
 
   return (
-    <div className="mobile">
-      <Header></Header>
-      <Search></Search>
       <main className="content">
         {LISTS.map((item) => (
           <ListItem
             key={item.id}
+            id={item.id}
             title={item.title}
             createdAt={item.createdAt}
             itemCount={item.itemCount}
           />
         ))}
       </main>
-      <NewListButton></NewListButton>
-      <BottomNav></BottomNav>
-    </div>
   );
 };
 

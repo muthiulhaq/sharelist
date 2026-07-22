@@ -1,37 +1,41 @@
 import "./ListItem.css";
+import { useNavigate } from "react-router-dom";
 
 interface ListItemProps {
+  id: number;
   title: string;
   createdAt: string;
   itemCount: number;
 }
 
-const ListItem = ({ title, createdAt, itemCount }: ListItemProps) => {
+const ListItem = ({ id, title, createdAt, itemCount }: ListItemProps) => {
+  const navigate = useNavigate();
+
   return (
-          <div className="card">
-            <div className="card-info">
-              <h3>{title}</h3>
+    <div className="card" onClick={() => navigate(`/list/${id}`)}>
+      <div className="card-info">
+        <div className="title-row">
+          <h3>{title} - {id}</h3>
 
-              <p>
-                <i className="fa-regular fa-calendar"></i>
-                {createdAt}
-              </p>
-            </div>
+          <span className="badge">{itemCount} - Items</span>
+        </div>
 
-            <div className="actions">
-              <button>
-                <i className="fas fa-share"></i>
-              </button>
+        <p>
+          <i className="fa-regular fa-calendar"></i>
+          {createdAt}
+        </p>
+      </div>
 
-              <button>
-                <i className="fas fa-eye"></i>
-              </button>
+      <div className="actions">
+        <button>
+          <i className="fas fa-share"></i>
+        </button>
 
-              <button className="delete">
-                <i className="fas fa-trash"></i>
-              </button>
-            </div>
-          </div>
+        <button className="delete">
+          <i className="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
   );
 };
 
