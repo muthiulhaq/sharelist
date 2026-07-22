@@ -1,21 +1,29 @@
 import "./ListDetailItem.css";
 
-const ListDetailItem = () => {
+interface IListDetailsItemProps {
+  id: number;
+  title: string;
+  quantity: number;
+  unit: string;
+  notes: string;
+}
+
+const ListDetailItem = ({id, title, quantity, unit, notes}: IListDetailsItemProps) => {
   return (
     <>
       <div className="list-item">
         <div className="item-left">
-          <div className="item-title">Milk</div>
+          <div className="item-title">{title}</div>
 
           <div className="item-note">
             <i className="fa-solid fa-triangle-exclamation"></i>
-            Buy low fat milk
+            {notes}
           </div>
         </div>
 
         <div className="item-right">
           <div className="qty">
-            2<span>Pkt</span>
+            {quantity}<span>{unit}</span>
           </div>
 
           <div className="item-actions">
