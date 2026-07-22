@@ -1,9 +1,12 @@
 import "./BottomNav.css";
+import { useNavigate } from "react-router-dom";
 
 export const BottomNav = () => {
+  const navigate = useNavigate();
+
   return (
     <nav className="bottom-nav">
-      <button className="active">
+      <button className="active" onClick={() => navigate(`/`)}>
         <i className="fas fa-list"></i>
         <span>Lists</span>
       </button>
@@ -13,7 +16,7 @@ export const BottomNav = () => {
         <span>Shared</span>
       </button>
 
-      <button>
+      <button >
         <i className="fas fa-user"></i>
         <span>Profile</span>
       </button>

@@ -7,8 +7,6 @@
 
   height: 78px;
 
-  background: white;
-
   display: flex;
 
   justify-content: space-around;
@@ -16,6 +14,11 @@
   align-items: center;
 
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+
+  padding-bottom: env(safe-area-inset-bottom);
+
+  background: white;
 }
 
 .bottom-nav button {

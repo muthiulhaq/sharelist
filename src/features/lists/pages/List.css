@@ -1,17 +1,3 @@
-
-.mobile {
-  width: 100%;
-  max-width: 480px;
-  height: 100vh;
-
-  margin: auto;
-
-  background: #f7f8fa;
-
-  position: relative;
-  overflow: hidden;
-}
-
 .content {
   position: absolute;
 
@@ -21,19 +7,13 @@
   left: 0;
   right: 0;
 
-  overflow-y: auto;
-
   padding: 16px;
+  flex: 1;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 500px) {
-  .mobile {
-    border-radius: 26px;
 
-    height: 92vh;
-
-    margin-top: 20px;
-
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-  }
-}

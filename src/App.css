@@ -8,3 +8,26 @@ body {
   font-family: Inter, sans-serif;
   background: var(--bg);
 }
+
+.mobile {
+    width: 100%;
+    margin: 0 auto;
+
+    height: 100dvh;
+    background: #F5F7FA;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+@media (min-width: 500px) {
+  .mobile {
+    border-radius: 26px;
+
+    height: 92vh;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  }
+}
