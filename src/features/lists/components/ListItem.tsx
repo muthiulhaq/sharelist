@@ -15,9 +15,11 @@ const ListItem = ({ id, title, createdAt, itemCount }: ListItemProps) => {
     <div className="card" onClick={() => navigate(`/list/${id}`)}>
       <div className="card-info">
         <div className="title-row">
-          <h3>{title} - {id}</h3>
+          <h3>
+            {title} - {id}
+          </h3>
 
-          <span className="badge">{itemCount} - Items</span>
+          <span className="badge">{itemCount}</span>
         </div>
 
         <p>
