@@ -1,9 +1,18 @@
+import { useEffect, useState } from "react";
+import AddNewItem from "../../../components/AddNewItem";
 import type { IListDetailsItem } from "../../../types";
 import ListDetailItem from "../components/ListDetailItem";
+import { useParams } from "react-router-dom";
 import "./ListDetails.css";
 
 const ListDetails = () => {
-  const ListDeatilItems: IListDetailsItem[] = [
+  const { id } = useParams();
+  const isEditMode = !!id;
+  const [ListDetailItemsData, setListDetailItemsData] = useState<
+    IListDetailsItem[]
+  >([]);
+
+  const ListDetailItems: IListDetailsItem[] = [
     {
       id: 1,
       title: "Milk",
@@ -111,19 +120,40 @@ const ListDetails = () => {
     },
   ];
 
+  useEffect(() => {
+    isEditMode
+      ? setListDetailItemsData(ListDetailItems)
+      : setListDetailItemsData([]);
+  }, [isEditMode]);
+
+  const handleAddedItem = (value: string) => {
+    const newItem: IListDetailsItem = {
+      id: Date.now(),
+      title: value,
+      quantity: 1,
+      unit: "Nos",
+      notes: "",
+    };
+
+    setListDetailItemsData((prev) => [newItem, ...prev]);
+  };
+
   return (
-    <main className="list-area">
-      {ListDeatilItems.map((item, index) => (
-        <ListDetailItem
-          key={index}
-          id={item.id}
-          title={item.title}
-          quantity={item.quantity}
-          unit={item.unit}
-          notes={item.notes}
-        ></ListDetailItem>
-      ))}
-    </main>
+    <>
+      <AddNewItem onSend={handleAddedItem}></AddNewItem>
+      <main className="list-area">
+        {ListDetailItemsData?.map((item) => (
+          <ListDetailItem
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            quantity={item.quantity}
+            unit={item.unit}
+            notes={item.notes}
+          ></ListDetailItem>
+        ))}
+      </main>
+    </>
   );
 };
 

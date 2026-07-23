@@ -1,3 +1,5 @@
+import { NewListButton } from "../../../components/NewListButton";
+import Search from "../../../components/Search";
 import type { IListItem } from "../../../types";
 
 import ListItem from "../components/ListItem";
@@ -68,6 +70,8 @@ const List = () => {
   ];
 
   return (
+    <>
+      <Search></Search>
       <main className="content">
         {LISTS.map((item) => (
           <ListItem
@@ -79,6 +83,8 @@ const List = () => {
           />
         ))}
       </main>
+      <NewListButton></NewListButton>
+    </>
   );
 };
 
