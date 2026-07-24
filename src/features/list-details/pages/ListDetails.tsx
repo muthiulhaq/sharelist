@@ -4,6 +4,7 @@ import type { IListDetailsItem } from "../../../types";
 import ListDetailItem from "../components/ListDetailItem";
 import { useParams } from "react-router-dom";
 import "./ListDetails.css";
+import ItemEditModal from "../components/ItemEditModal";
 
 const ListDetails = () => {
   const { id } = useParams();
@@ -140,6 +141,7 @@ const ListDetails = () => {
 
   return (
     <>
+      <ItemEditModal></ItemEditModal>
       <AddNewItem onSend={handleAddedItem}></AddNewItem>
       <main className="list-area">
         {ListDetailItemsData?.map((item) => (
