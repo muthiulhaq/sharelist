@@ -1,25 +1,31 @@
 import "./ItemEditModal.css";
+import type { IListDetailsItem } from "../../../types";
 
-export const ItemEditModal = () => {
+interface IItemEditModalProps {
+  item: IListDetailsItem;
+  onClose: () => void;
+}
+
+export const ItemEditModal = ({ item, onClose }: IItemEditModalProps) => {
   return (
     <div className="modal-backdrop">
       <div className="item-modal">
         <div className="modal-body">
           <div className="form-group">
-            <input type="text" placeholder="Item title" />
+            <input type="text" placeholder="Item title" defaultValue={item.title} />
           </div>
 
           <div className="row">
             <div className="form-group">
               <label>Quantity</label>
 
-              <input type="number" value="1" />
+              <input type="number" defaultValue={item.quantity} />
             </div>
 
             <div className="form-group">
               <label>Unit</label>
 
-              <select>
+              <select defaultValue={item.unit}>
                 <option>Nos</option>
                 <option>Kg</option>
                 <option>Pkt</option>
@@ -32,12 +38,12 @@ export const ItemEditModal = () => {
           <div className="form-group">
             <label>Notes</label>
 
-            <textarea placeholder="Optional notes..."></textarea>
+            <textarea placeholder="Optional notes..." defaultValue={item.notes}></textarea>
           </div>
         </div>
 
         <div className="modal-footer">
-          <button className="delete-btn">
+          <button className="delete-btn" onClick={onClose}>
             <i className="fa-solid fa-close"></i>
             Close
           </button>

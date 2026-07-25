@@ -12,6 +12,9 @@ const ListDetails = () => {
   const [ListDetailItemsData, setListDetailItemsData] = useState<
     IListDetailsItem[]
   >([]);
+  const [selectedItem, setSelectedItem] = useState<IListDetailsItem | null>(
+    null
+  );
 
   const ListDetailItems: IListDetailsItem[] = [
     {
@@ -141,7 +144,12 @@ const ListDetails = () => {
 
   return (
     <>
-      <ItemEditModal></ItemEditModal>
+      {selectedItem && (
+        <ItemEditModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        ></ItemEditModal>
+      )}
       <AddNewItem onSend={handleAddedItem}></AddNewItem>
       <main className="list-area">
         {ListDetailItemsData?.map((item) => (
@@ -152,6 +160,7 @@ const ListDetails = () => {
             quantity={item.quantity}
             unit={item.unit}
             notes={item.notes}
+            onSelect={() => setSelectedItem(item)}
           ></ListDetailItem>
         ))}
       </main>

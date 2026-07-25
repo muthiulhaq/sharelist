@@ -6,12 +6,13 @@ interface IListDetailsItemProps {
   quantity: number;
   unit: string;
   notes: string;
+  onSelect: () => void;
 }
 
-const ListDetailItem = ({id, title, quantity, unit, notes}: IListDetailsItemProps) => {
+const ListDetailItem = ({title, quantity, unit, notes, onSelect}: IListDetailsItemProps) => {
   return (
     <>
-      <div className="list-item">
+      <div className="list-item" onClick={onSelect}>
         <div className="item-left">
           <div className="item-title">{title}</div>
 
