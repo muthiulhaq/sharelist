@@ -1,5 +1,7 @@
 .card {
-  background: white;
+  background: var(--surface);
+
+  border: 1px solid var(--border-soft);
 
   border-radius: 18px;
 
@@ -13,13 +15,21 @@
 
   align-items: center;
 
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-md);
+
+  transition: 0.2s;
+}
+
+.card:hover {
+  border-color: var(--primary-tint);
 }
 
 .card-info h3 {
   font-size: 15px;
 
   margin-bottom: 6px;
+
+  color: var(--text);
 }
 
 .title-row {
@@ -45,15 +55,18 @@
 
   padding: 0 10px;
 
-  background: #ffffff;
-  border: 1px solid #ccc;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-tint);
   border-radius: 999px;
+
+  color: var(--primary-hover);
+  font-weight: 600;
 
   font-size: 12px;
 }
 
 .card-info p {
-  color: #888;
+  color: var(--text-muted);
 
   font-size: 12px;
 }
@@ -71,13 +84,25 @@
 
   border-radius: 10px;
 
-  background: #f5f6f8;
+  background: var(--surface-muted);
 
   cursor: pointer;
 
-  color: #555;
+  color: var(--ink-700);
+
+  transition: 0.2s;
+}
+
+.actions button:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .delete {
-  color: #ef4444 !important;
+  color: var(--danger) !important;
+}
+
+.actions .delete:hover {
+  background: var(--danger);
+  color: var(--on-danger) !important;
 }

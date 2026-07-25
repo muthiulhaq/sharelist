@@ -1,5 +1,5 @@
 .list-area {
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
 
 .list-item {
@@ -17,13 +17,13 @@
 }
 
 .list-item:hover {
-  background: #fafafa;
+  background: var(--primary-soft);
 }
 
 .divider {
   height: 1px;
 
-  background: #ededed;
+  background: var(--border-soft);
 }
 
 .item-left {
@@ -36,6 +36,8 @@
   font-weight: 600;
 
   line-height: 1.4;
+
+  color: var(--text);
 }
 
 .item-note {
@@ -47,7 +49,7 @@
 
   gap: 8px;
 
-  color: #d32f2f;
+  color: var(--green-800);
 
   font-size: 13px;
 
@@ -69,7 +71,7 @@
 .qty {
   text-align: right;
 
-  color: #2563eb;
+  color: var(--primary);
 
   font-size: 24px;
 
@@ -83,7 +85,7 @@
 
   font-size: 12px;
 
-  color: #8b8b8b;
+  color: var(--text-muted);
 
   font-weight: 500;
 
@@ -107,27 +109,31 @@
 
   border-radius: 10px;
 
-  background: #f5f6f8;
+  background: var(--surface-muted);
 
   cursor: pointer;
 
   transition: 0.25s;
 
-  color: #6b7280;
+  color: var(--ink-700);
 }
 
 .item-actions button:hover {
   transform: scale(1.05);
 
-  background: #eceff3;
+  background: var(--primary-tint);
+
+  color: var(--primary-hover);
 }
 
 .item-actions .delete {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .item-actions .delete:hover {
-  background: #fdecec;
+  background: var(--danger);
+
+  color: var(--on-danger);
 }
 
 @media (max-width: 380px) {

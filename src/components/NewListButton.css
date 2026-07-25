@@ -12,15 +12,26 @@
 
   border: none;
 
-  background: #3b82f6;
+  background: var(--primary);
 
-  color: white;
+  color: var(--on-primary);
 
   font-size: 22px;
 
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.35);
+  box-shadow: var(--shadow-primary);
 
   cursor: pointer;
 
+  transition: 0.2s;
+
   z-index: 20;
+}
+
+.fab:hover {
+  background: var(--primary-hover);
+}
+
+.fab:active {
+  background: var(--primary-active);
+  transform: scale(0.95);
 }

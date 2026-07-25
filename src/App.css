@@ -7,6 +7,7 @@
 body {
   font-family: Inter, sans-serif;
   background: var(--bg);
+  color: var(--text);
 }
 
 .mobile {
@@ -14,7 +15,7 @@ body {
     margin: 0 auto;
 
     height: 100dvh;
-    background: #F5F7FA;
+    background: var(--bg);
 
     display: flex;
     flex-direction: column;
@@ -28,6 +29,6 @@ body {
 
     height: 92vh;
 
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-lg);
   }
 }

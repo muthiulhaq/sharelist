@@ -1,0 +1,58 @@
+:root {
+  /* ---------- Green ---------- */
+  --green-950: #04140c;
+  --green-900: #06251a;
+  --green-800: #0a3b29;
+  --green-700: #0f5132;
+  --green-600: #147a45;
+  --green-500: #1da85d;
+  --green-400: #34c77b;
+  --green-200: #a7e3c3;
+  --green-100: #d7f2e4;
+  --green-50: #eff9f3;
+
+  /* ---------- Black / neutrals ---------- */
+  --black: #0b0f0d;
+  --ink-900: #121714;
+  --ink-700: #2a322d;
+  --ink-500: #5a655e;
+  --ink-400: #7c8781;
+  --ink-300: #a8b1ac;
+  --ink-200: #d9dedb;
+  --ink-100: #ebefec;
+  --ink-50: #f4f7f5;
+  --white: #ffffff;
+
+  /* ---------- Semantic ---------- */
+  --bg: var(--ink-50);
+  --surface: var(--white);
+  --surface-muted: var(--ink-100);
+
+  --text: var(--ink-900);
+  --text-muted: var(--ink-500);
+  --text-faint: var(--ink-400);
+
+  --border: var(--ink-200);
+  --border-soft: var(--ink-100);
+
+  --primary: var(--green-600);
+  --primary-hover: var(--green-700);
+  --primary-active: var(--green-800);
+  --primary-soft: var(--green-50);
+  --primary-tint: var(--green-100);
+  --on-primary: var(--white);
+
+  /* Destructive stays inside the palette: solid black */
+  --danger: var(--black);
+  --danger-soft: var(--ink-100);
+  --on-danger: var(--white);
+
+  /* ---------- Elevation ---------- */
+  --shadow-sm: 0 2px 12px rgba(11, 15, 13, 0.06);
+  --shadow-md: 0 6px 18px rgba(11, 15, 13, 0.08);
+  --shadow-lg: 0 15px 40px rgba(11, 15, 13, 0.14);
+  --shadow-primary: 0 10px 30px rgba(20, 122, 69, 0.32);
+
+  color: var(--text);
+  background: var(--bg);
+}

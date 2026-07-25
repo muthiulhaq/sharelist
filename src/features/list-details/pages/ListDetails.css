@@ -19,7 +19,7 @@
 }
 
 .list-area::-webkit-scrollbar-thumb {
-  background: #d8d8d8;
+  background: var(--border);
 
   border-radius: 20px;
 }
