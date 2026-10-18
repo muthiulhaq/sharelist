@@ -32,16 +32,26 @@ function mapRow(row: ListItemRow): IListDetailsItem {
   };
 }
 
+type SharedList = {
+  id: number;
+  title: string;
+  created_by: string | null;
+  items: ListItemRow[] | null;
+};
+
 const ListDetails = () => {
-  const { id } = useParams();
+  const { shareId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const draftTitle =
     (location.state as DraftLocationState | null)?.draftTitle?.trim() ?? "";
-  const isDraft = !id && draftTitle.length > 0;
+  const isDraft = !shareId && draftTitle.length > 0;
   const { user } = useAuth();
   const { setDetail } = useListCount();
   const [listTitle, setListTitle] = useState(draftTitle);
+  const [listId, setListId] = useState<number | null>(null);
+  const [ownerId, setOwnerId] = useState<string | null>(null);
+  const readOnly = Boolean(shareId) && ownerId !== user?.id;
   const [listDetailItemsData, setListDetailItemsData] = useState<
     IListDetailsItem[]
   >([]);
@@ -53,24 +63,20 @@ const ListDetails = () => {
   const [pendingDelete, setPendingDelete] = useState<IListDetailsItem | null>(null);
 
   useEffect(() => {
-    if (!id && !draftTitle) {
+    if (!shareId && !draftTitle && user) {
       navigate("/", { replace: true });
     }
-  }, [id, draftTitle, navigate]);
+  }, [shareId, draftTitle, navigate, user]);
 
   useEffect(() => {
-    if (!id || !supabase || !user) return;
+    if (!shareId || !supabase) return;
 
     const client = supabase;
     let cancelled = false;
 
     client
-      .from("lists")
-      .select("title")
-      .eq("id", Number(id))
-      .eq("created_by", user.id)
-      .maybeSingle()
-      .then(async ({ data, error: listError }) => {
+      .rpc("get_list_by_share_id", { share: shareId })
+      .then(({ data, error: listError }) => {
         if (cancelled) return;
 
         if (listError) {
@@ -79,39 +85,27 @@ const ListDetails = () => {
           return;
         }
 
-        if (!data?.title) {
+        const list = data as SharedList | null;
+        if (!list?.title) {
           setListTitle("");
+          setListId(null);
+          setOwnerId(null);
           setListDetailItemsData([]);
-          setError("You can only open lists you created.");
+          setError("This list is not available.");
           return;
         }
 
-        setListTitle(data.title);
-
-        const itemsResult = await client
-          .from("list_items")
-          .select("id, title, quantity, unit, notes")
-          .eq("list_id", Number(id))
-          .order("id", { ascending: false });
-
-        if (cancelled) return;
-
-        if (itemsResult.error) {
-          setError(itemsResult.error.message);
-          setListDetailItemsData([]);
-          return;
-        }
-
+        setListTitle(list.title);
+        setListId(list.id);
+        setOwnerId(list.created_by);
         setError(null);
-        setListDetailItemsData(
-          (itemsResult.data ?? []).map((row) => mapRow(row as ListItemRow)),
-        );
+        setListDetailItemsData((list.items ?? []).map((row) => mapRow(row)));
       });
 
     return () => {
       cancelled = true;
     };
-  }, [id, user]);
+  }, [shareId]);
 
   useEffect(() => {
     const title = isDraft ? draftTitle : listTitle;
@@ -123,7 +117,8 @@ const ListDetails = () => {
   }, [isDraft, draftTitle, listTitle, listDetailItemsData.length, setDetail]);
 
   const handleSaveItem = async (item: IListDetailsItem) => {
-    if (!supabase || !id) {
+    if (readOnly) return;
+    if (!supabase || isDraft) {
       setListDetailItemsData((prev) =>
         prev.map((row) => (row.id === item.id ? item : row))
       );
@@ -166,7 +161,8 @@ const ListDetails = () => {
   };
 
   const handleDeleteItem = async (itemId: number) => {
-    if (!supabase || !id) {
+    if (readOnly) return;
+    if (!supabase || isDraft) {
       setListDetailItemsData((prev) => prev.filter((row) => row.id !== itemId));
       setSelectedItem(null);
       return;
@@ -203,6 +199,7 @@ const ListDetails = () => {
       .from("lists")
       .insert({
         title: draftTitle,
+        share_id: crypto.randomUUID(),
         created_by: user?.id ?? null,
         created_by_email: user?.email ?? null,
       })
@@ -242,7 +239,9 @@ const ListDetails = () => {
   };
 
   const handleAddedItem = async (value: string) => {
-    if (!supabase || !id) {
+    if (readOnly) return;
+
+    if (!supabase || isDraft || !listId) {
       setListDetailItemsData((prev) => [
         {
           id: Date.now(),
@@ -259,7 +258,7 @@ const ListDetails = () => {
     const { data, error: insertError } = await supabase
       .from("list_items")
       .insert({
-        list_id: Number(id),
+        list_id: listId,
         title: value,
         quantity: 1,
         unit: "Nos",
@@ -300,8 +299,8 @@ const ListDetails = () => {
           onSave={handleSaveItem}
         ></ItemEditModal>
       )}
-      <AddNewItem onSend={handleAddedItem}></AddNewItem>
-      <main className={isDraft ? "list-area list-area-draft" : "list-area"}>
+      {!readOnly && <AddNewItem onSend={handleAddedItem}></AddNewItem>}
+      <main className={isDraft ? "list-area list-area-draft" : readOnly ? "list-area list-area-readonly" : "list-area"}>
         {error && <p className="list-items-error">{error}</p>}
         {listDetailItemsData.map((item) => (
           <ListDetailItem
@@ -311,6 +310,7 @@ const ListDetails = () => {
             quantity={item.quantity}
             unit={item.unit}
             notes={item.notes}
+            readOnly={readOnly}
             onSelect={() => setSelectedItem(item)}
             onDelete={() => setPendingDelete(item)}
           ></ListDetailItem>

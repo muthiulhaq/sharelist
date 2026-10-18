@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 interface ListItemProps {
   id: number;
+  shareId: string;
   title: string;
   createdAt: string;
   itemCount?: number;
@@ -24,6 +25,7 @@ function formatListDate(value: string) {
 
 const ListItem = ({
   id,
+  shareId,
   title,
   createdAt,
   itemCount = 0,
@@ -47,7 +49,7 @@ const ListItem = ({
 
   const shareList = async () => {
     const url = new URL(
-      `list/${id}`,
+      `list/${shareId}`,
       window.location.origin + import.meta.env.BASE_URL,
     ).href;
 
@@ -68,7 +70,7 @@ const ListItem = ({
   };
 
   return (
-    <div className="card" onClick={() => navigate(`/list/${id}`)}>
+    <div className="card" onClick={() => navigate(`/list/${shareId}`)}>
       <div className="card-info">
         <div className="title-row">
           <div className="title-main">

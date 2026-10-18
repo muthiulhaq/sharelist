@@ -31,6 +31,10 @@
   border-radius: 20px;
 }
 
+.list-area-readonly {
+  top: 75px;
+}
+
 .list-area-draft {
   bottom: 76px;
 }
