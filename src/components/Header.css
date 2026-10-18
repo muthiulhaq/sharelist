@@ -6,6 +6,7 @@
   justify-content: space-between;
   align-items: center;
 
+  gap: 12px;
   padding: 18px;
 
   background: var(--surface);
@@ -21,6 +22,14 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-copy h2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header h2 {
@@ -57,5 +66,52 @@
 
 .icon-btn:hover {
   background: var(--primary-tint);
+  color: var(--primary-hover);
+}
+
+.header-menu-wrap {
+  position: relative;
+}
+
+.header-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  border: none;
+  background: transparent;
+  z-index: 20;
+}
+
+.header-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 21;
+  min-width: 168px;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+}
+
+.header-menu button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: none;
+  border-radius: 10px;
+  padding: 12px;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.header-menu button:hover {
+  background: var(--primary-soft);
   color: var(--primary-hover);
 }

@@ -14,9 +14,9 @@ export const BottomNav = () => {
 
       <NewListButton></NewListButton>
 
-      <button>
-        <i className="fas fa-user"></i>
-        <span>Profile</span>
+      <button type="button">
+        <i className="fa-regular fa-heart"></i>
+        <span>Favorite</span>
       </button>
     </nav>
   );

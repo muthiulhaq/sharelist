@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import List from "./features/lists/pages/List";
 import Header from "./components/Header";
@@ -7,6 +7,9 @@ import ListDetails from "./features/list-details/pages/ListDetails";
 import { ListCountProvider } from "./listCount";
 
 function App() {
+  const location = useLocation();
+  const isDetail = location.pathname.startsWith("/list");
+
   return (
     <ListCountProvider>
       <div className="mobile">
@@ -16,7 +19,7 @@ function App() {
           <Route path="/list" element={<ListDetails />} />
           <Route path="/list/:id" element={<ListDetails />} />
         </Routes>
-        <BottomNav></BottomNav>
+        {!isDetail && <BottomNav></BottomNav>}
       </div>
     </ListCountProvider>
   );
