@@ -6,7 +6,7 @@
 
 .lists-error {
   margin-bottom: 12px;
-  color: var(--text-muted);
+  color: var(--error);
   font-size: 14px;
   line-height: 1.4;
 }

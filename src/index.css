@@ -43,6 +43,7 @@
   --on-primary: var(--white);
 
   /* Destructive stays inside the palette: solid black */
+  --error: #c42323;
   --danger: var(--black);
   --danger-soft: var(--ink-100);
   --on-danger: var(--white);

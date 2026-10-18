@@ -86,7 +86,8 @@
   top: calc(100% + 8px);
   right: 0;
   z-index: 21;
-  min-width: 168px;
+  min-width: 180px;
+  max-width: 260px;
   padding: 6px;
   background: var(--surface);
   border: 1px solid var(--border-soft);
@@ -109,6 +110,9 @@
   font-weight: 600;
   cursor: pointer;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-menu button:hover {
