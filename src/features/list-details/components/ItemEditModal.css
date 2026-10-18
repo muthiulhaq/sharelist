@@ -2,7 +2,7 @@
 
 .modal-backdrop{
 
-    position:fixed;
+    position:absolute;
 
     inset:0;
 
@@ -261,6 +261,10 @@
 .save-btn{
 
     height:52px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
 
     transition:.2s;
 
@@ -287,7 +291,7 @@
 }
 
 .modal-footer .fa-solid {
-    margin-right: 10px;
+    margin: 0;
 }
 /* =========================== */
 

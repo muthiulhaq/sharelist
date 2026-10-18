@@ -4,18 +4,21 @@ import List from "./features/lists/pages/List";
 import Header from "./components/Header";
 import BottomNav from "./components/BottomNav";
 import ListDetails from "./features/list-details/pages/ListDetails";
+import { ListCountProvider } from "./listCount";
 
 function App() {
   return (
-    <div className="mobile">
-      <Header></Header>
-      <Routes>
-        <Route path="/" element={<List />} />
-        <Route path="/list" element={<ListDetails />} />
-        <Route path="/list/:id" element={<ListDetails />} />
-      </Routes>
-      <BottomNav></BottomNav>
-    </div>
+    <ListCountProvider>
+      <div className="mobile">
+        <Header></Header>
+        <Routes>
+          <Route path="/" element={<List />} />
+          <Route path="/list" element={<ListDetails />} />
+          <Route path="/list/:id" element={<ListDetails />} />
+        </Routes>
+        <BottomNav></BottomNav>
+      </div>
+    </ListCountProvider>
   );
 }
 

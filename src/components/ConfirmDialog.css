@@ -1,0 +1,58 @@
+.confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(11, 15, 13, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.confirm-sheet {
+  width: 100%;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 22px 18px 28px;
+  box-shadow: 0 -10px 40px rgba(11, 15, 13, 0.2);
+}
+
+.confirm-sheet h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.confirm-sheet p {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.confirm-cancel,
+.confirm-delete {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-cancel {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+
+.confirm-delete {
+  background: var(--danger);
+  color: var(--on-danger);
+}

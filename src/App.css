@@ -6,29 +6,34 @@
 
 body {
   font-family: Inter, sans-serif;
-  background: var(--bg);
+  background: #e6ece8;
   color: var(--text);
 }
 
+#root {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .mobile {
-    width: 100%;
-    margin: 0 auto;
-
-    height: 100dvh;
-    background: var(--bg);
-
-    display: flex;
-    flex-direction: column;
-
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 @media (min-width: 500px) {
   .mobile {
-    border-radius: 26px;
-
-    height: 92vh;
-
+    height: min(92vh, 900px);
+    border-radius: 28px;
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-lg);
   }
 }

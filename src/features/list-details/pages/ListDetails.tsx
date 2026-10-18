@@ -1,158 +1,275 @@
 import { useEffect, useState } from "react";
 import AddNewItem from "../../../components/AddNewItem";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import { supabase } from "../../../lib/supabase";
 import type { IListDetailsItem } from "../../../types";
 import ListDetailItem from "../components/ListDetailItem";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./ListDetails.css";
 import ItemEditModal from "../components/ItemEditModal";
 
+type DraftLocationState = {
+  draftTitle?: string;
+};
+
+type ListItemRow = {
+  id: number;
+  title: string;
+  quantity: number | null;
+  unit: string | null;
+  notes: string | null;
+};
+
+function mapRow(row: ListItemRow): IListDetailsItem {
+  return {
+    id: row.id,
+    title: row.title,
+    quantity: row.quantity ?? 0,
+    unit: row.unit ?? "",
+    notes: row.notes ?? "",
+  };
+}
+
 const ListDetails = () => {
   const { id } = useParams();
-  const isEditMode = !!id;
-  const [ListDetailItemsData, setListDetailItemsData] = useState<
+  const navigate = useNavigate();
+  const location = useLocation();
+  const draftTitle =
+    (location.state as DraftLocationState | null)?.draftTitle?.trim() ?? "";
+  const isDraft = !id && draftTitle.length > 0;
+  const [listDetailItemsData, setListDetailItemsData] = useState<
     IListDetailsItem[]
   >([]);
   const [selectedItem, setSelectedItem] = useState<IListDetailsItem | null>(
     null
   );
-
-  const ListDetailItems: IListDetailsItem[] = [
-    {
-      id: 1,
-      title: "Milk",
-      quantity: 2,
-      unit: "Pkt",
-      notes: "Buy low fat milk",
-    },
-    {
-      id: 2,
-      title: "Tomatoes",
-      quantity: 5,
-      unit: "Kg",
-      notes: "Buy ripe tomatoes only",
-    },
-    {
-      id: 3,
-      title: "Bread",
-      quantity: 1,
-      unit: "Loaf",
-      notes: "",
-    },
-    {
-      id: 4,
-      title: "Eggs",
-      quantity: 12,
-      unit: "Nos",
-      notes: "Organic if available",
-    },
-    {
-      id: 5,
-      title: "Coffee",
-      quantity: 1,
-      unit: "Box",
-      notes: "",
-    },
-    {
-      id: 6,
-      title: "Rice",
-      quantity: 10,
-      unit: "Kg",
-      notes: "Basmati preferred",
-    },
-    {
-      id: 7,
-      title: "Sugar",
-      quantity: 2,
-      unit: "Kg",
-      notes: "",
-    },
-    {
-      id: 8,
-      title: "Cooking Oil",
-      quantity: 2,
-      unit: "Ltr",
-      notes: "Sunflower oil",
-    },
-    {
-      id: 9,
-      title: "Chicken",
-      quantity: 2,
-      unit: "Kg",
-      notes: "Skinless",
-    },
-    {
-      id: 10,
-      title: "Potatoes",
-      quantity: 3,
-      unit: "Kg",
-      notes: "",
-    },
-    {
-      id: 11,
-      title: "Onions",
-      quantity: 2,
-      unit: "Kg",
-      notes: "",
-    },
-    {
-      id: 12,
-      title: "Carrots",
-      quantity: 1,
-      unit: "Kg",
-      notes: "Fresh only",
-    },
-    {
-      id: 13,
-      title: "Bananas",
-      quantity: 12,
-      unit: "Nos",
-      notes: "",
-    },
-    {
-      id: 14,
-      title: "Apples",
-      quantity: 6,
-      unit: "Nos",
-      notes: "Red apples",
-    },
-    {
-      id: 15,
-      title: "Cheese",
-      quantity: 2,
-      unit: "Pack",
-      notes: "Cheddar",
-    },
-  ];
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<IListDetailsItem | null>(null);
 
   useEffect(() => {
-    isEditMode
-      ? setListDetailItemsData(ListDetailItems)
-      : setListDetailItemsData([]);
-  }, [isEditMode]);
+    if (!id && !draftTitle) {
+      navigate("/", { replace: true });
+    }
+  }, [id, draftTitle, navigate]);
 
-  const handleAddedItem = (value: string) => {
-    const newItem: IListDetailsItem = {
-      id: Date.now(),
-      title: value,
-      quantity: 1,
-      unit: "Nos",
-      notes: "",
+  useEffect(() => {
+    if (!id) {
+      setListDetailItemsData([]);
+      return;
+    }
+
+    if (!supabase) {
+      setError(
+        "Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env, then restart the dev server."
+      );
+      return;
+    }
+
+    let cancelled = false;
+
+    supabase
+      .from("list_items")
+      .select("id, title, quantity, unit, notes")
+      .eq("list_id", Number(id))
+      .order("id", { ascending: false })
+      .then(({ data, error: queryError }) => {
+        if (cancelled) return;
+
+        if (queryError) {
+          setError(queryError.message);
+          setListDetailItemsData([]);
+          return;
+        }
+
+        setError(null);
+        setListDetailItemsData((data ?? []).map((row) => mapRow(row as ListItemRow)));
+      });
+
+    return () => {
+      cancelled = true;
     };
+  }, [id]);
 
-    setListDetailItemsData((prev) => [newItem, ...prev]);
+  const handleSaveItem = async (item: IListDetailsItem) => {
+    if (!supabase || !id) {
+      setListDetailItemsData((prev) =>
+        prev.map((row) => (row.id === item.id ? item : row))
+      );
+      setSelectedItem(null);
+      return;
+    }
+
+    const { data, error: updateError } = await supabase
+      .from("list_items")
+      .update({
+        title: item.title,
+        quantity: item.quantity,
+        unit: item.unit,
+        notes: item.notes,
+      })
+      .eq("id", item.id)
+      .select("id, title, quantity, unit, notes")
+      .single();
+
+    if (updateError) {
+      setError(
+        updateError.code === "PGRST116"
+          ? "Could not save this item. Allow update on list_items for the anon role."
+          : updateError.message
+      );
+      return;
+    }
+
+    if (!data) {
+      setError("Could not save this item. Allow update on list_items for the anon role.");
+      return;
+    }
+
+    const saved = mapRow(data as ListItemRow);
+    setError(null);
+    setListDetailItemsData((prev) =>
+      prev.map((row) => (row.id === saved.id ? saved : row))
+    );
+    setSelectedItem(null);
+  };
+
+  const handleDeleteItem = async (itemId: number) => {
+    if (!supabase || !id) {
+      setListDetailItemsData((prev) => prev.filter((row) => row.id !== itemId));
+      setSelectedItem(null);
+      return;
+    }
+
+    const { data, error: deleteError } = await supabase
+      .from("list_items")
+      .delete()
+      .eq("id", itemId)
+      .select("id");
+
+    if (deleteError) {
+      setError(deleteError.message);
+      return;
+    }
+
+    if (!data?.length) {
+      setError("Could not delete this item. Allow delete on list_items for the anon role.");
+      return;
+    }
+
+    setError(null);
+    setListDetailItemsData((prev) => prev.filter((row) => row.id !== itemId));
+    setSelectedItem((current) => (current?.id === itemId ? null : current));
+  };
+
+  const handleSaveList = async () => {
+    if (!supabase || !isDraft || saving) return;
+
+    setSaving(true);
+    setError(null);
+
+    const { data: list, error: listError } = await supabase
+      .from("lists")
+      .insert({ title: draftTitle })
+      .select("id")
+      .single();
+
+    if (listError || !list) {
+      setError(
+        listError?.message ??
+          "Could not create this list. Allow insert on lists for the anon role."
+      );
+      setSaving(false);
+      return;
+    }
+
+    if (listDetailItemsData.length > 0) {
+      const { error: itemsError } = await supabase.from("list_items").insert(
+        listDetailItemsData.map((item) => ({
+          list_id: list.id,
+          title: item.title,
+          quantity: item.quantity,
+          unit: item.unit,
+          notes: item.notes,
+        }))
+      );
+
+      if (itemsError) {
+        await supabase.from("lists").delete().eq("id", list.id);
+        setError(itemsError.message);
+        setSaving(false);
+        return;
+      }
+    }
+
+    setSaving(false);
+    navigate("/");
+  };
+
+  const handleAddedItem = async (value: string) => {
+    if (!supabase || !id) {
+      setListDetailItemsData((prev) => [
+        {
+          id: Date.now(),
+          title: value,
+          quantity: 1,
+          unit: "Nos",
+          notes: "",
+        },
+        ...prev,
+      ]);
+      return;
+    }
+
+    const { data, error: insertError } = await supabase
+      .from("list_items")
+      .insert({
+        list_id: Number(id),
+        title: value,
+        quantity: 1,
+        unit: "Nos",
+        notes: "",
+      })
+      .select("id, title, quantity, unit, notes")
+      .single();
+
+    if (insertError) {
+      setError(insertError.message);
+      return;
+    }
+
+    if (data) {
+      setError(null);
+      setListDetailItemsData((prev) => [mapRow(data as ListItemRow), ...prev]);
+    }
   };
 
   return (
     <>
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this item?"
+          message={`“${pendingDelete.title}” will be removed from this list.`}
+          onCancel={() => setPendingDelete(null)}
+          onConfirm={() => {
+            const itemId = pendingDelete.id;
+            setPendingDelete(null);
+            handleDeleteItem(itemId);
+          }}
+        ></ConfirmDialog>
+      )}
       {selectedItem && (
         <ItemEditModal
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
+          onSave={handleSaveItem}
         ></ItemEditModal>
       )}
       <AddNewItem onSend={handleAddedItem}></AddNewItem>
-      <main className="list-area">
-        {ListDetailItemsData?.map((item) => (
+      <main className={isDraft ? "list-area list-area-draft" : "list-area"}>
+        {isDraft && <h2 className="draft-name">{draftTitle}</h2>}
+        {error && <p className="list-items-error">{error}</p>}
+        {listDetailItemsData.map((item) => (
           <ListDetailItem
             key={item.id}
             id={item.id}
@@ -161,9 +278,21 @@ const ListDetails = () => {
             unit={item.unit}
             notes={item.notes}
             onSelect={() => setSelectedItem(item)}
+            onDelete={() => setPendingDelete(item)}
           ></ListDetailItem>
         ))}
       </main>
+      {isDraft && (
+        <button
+          type="button"
+          className="save-list-btn"
+          onClick={handleSaveList}
+          disabled={saving}
+        >
+          <i className="fa-solid fa-check"></i>
+          {saving ? "Saving..." : "Save"}
+        </button>
+      )}
     </>
   );
 };

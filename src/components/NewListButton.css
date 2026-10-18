@@ -1,30 +1,23 @@
 .fab {
-  position: absolute;
-
-  right: 20px;
-
-  bottom: 90px;
-
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
 
   border-radius: 50%;
-
   border: none;
 
   background: var(--primary);
-
   color: var(--on-primary);
 
-  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  font-size: 22px;
   box-shadow: var(--shadow-primary);
 
   cursor: pointer;
-
   transition: 0.2s;
-
-  z-index: 20;
 }
 
 .fab:hover {
@@ -34,4 +27,82 @@
 .fab:active {
   background: var(--primary-active);
   transform: scale(0.95);
+}
+
+.name-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 999;
+  background: rgba(11, 15, 13, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.name-sheet {
+  width: 100%;
+  max-width: 500px;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 22px 18px 28px;
+  box-shadow: 0 -10px 40px rgba(11, 15, 13, 0.2);
+}
+
+.name-sheet label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.name-row input {
+  flex: 1;
+  height: 52px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+}
+
+.name-row input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(20, 122, 69, 0.1);
+}
+
+.name-tick,
+.bottom-nav .name-tick {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 14px;
+  background: var(--primary);
+  color: var(--on-primary);
+  cursor: pointer;
+  line-height: 0;
+}
+
+.bottom-nav .name-tick i {
+  font-size: 18px;
+  line-height: 1;
+  margin: 0;
+}
+
+.name-tick:hover {
+  background: var(--primary-hover);
 }

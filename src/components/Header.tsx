@@ -1,11 +1,17 @@
 import "./Header.css";
+import { useListCount } from "../listCount";
 
 const Header = () => {
+  const { count } = useListCount();
+  const label = count === 1 ? "List" : "Lists";
+
   return (
     <header className="header">
-      <div>
+      <div className="header-copy">
         <h2>My Lists</h2>
-        <span>26 Lists</span>
+        <span>
+          {count} {label}
+        </span>
       </div>
 
       <button className="icon-btn">
