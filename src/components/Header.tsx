@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
+import FeedbackForm from "./FeedbackForm";
 import { useListCount } from "../listCount";
 
 const Header = () => {
@@ -11,6 +12,7 @@ const Header = () => {
   const { user, signOut } = useAuth();
   const isDetail = location.pathname.startsWith("/list");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const itemCount = detail?.itemCount ?? 0;
   const subtitle = isDetail
     ? `${itemCount} ${itemCount === 1 ? "item" : "items"}`
@@ -57,7 +59,13 @@ const Header = () => {
                   <i className="fa-regular fa-user"></i>
                   {user?.email ?? "Profile"}
                 </button>
-                <button type="button" onClick={() => setMenuOpen(false)}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setFeedbackOpen(true);
+                  }}
+                >
                   <i className="fa-regular fa-comment"></i>
                   Feedback
                 </button>
@@ -76,6 +84,7 @@ const Header = () => {
           )}
         </div>
       )}
+      {feedbackOpen && <FeedbackForm onClose={() => setFeedbackOpen(false)} />}
     </header>
   );
 };

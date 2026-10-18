@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import Search from "../../../components/Search";
+import { useAuth } from "../../../auth";
 import { supabase } from "../../../lib/supabase";
 import { useListCount } from "../../../listCount";
 import type { IListItem } from "../../../types";
@@ -23,56 +24,69 @@ const List = () => {
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<IListItem | null>(null);
   const [query, setQuery] = useState("");
+  const { user } = useAuth();
   const { setCount } = useListCount();
 
   useEffect(() => {
-    if (!supabase) {
+    if (!supabase || !user) {
       setError("Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env, then restart the dev server.");
       return;
     }
 
+    const client = supabase;
     let cancelled = false;
 
-    Promise.all([
-      supabase
-        .from("lists")
-        .select("id, title, created_at")
-        .order("created_at", { ascending: false }),
-      supabase.from("list_items").select("list_id"),
-    ]).then(([listsResult, itemsResult]) => {
-      if (cancelled) return;
+    client
+      .from("lists")
+      .select("id, title, created_at")
+      .eq("created_by", user.id)
+      .order("created_at", { ascending: false })
+      .then(async (listsResult) => {
+        if (cancelled) return;
 
-      if (listsResult.error) {
-        setError(listsResult.error.message);
-        return;
-      }
+        if (listsResult.error) {
+          setError(listsResult.error.message);
+          return;
+        }
 
-      if (itemsResult.error) {
-        setError(itemsResult.error.message);
-      } else {
-        setError(null);
-      }
+        const rows = (listsResult.data ?? []) as ListRow[];
+        const ids = rows.map((row) => row.id);
+        const counts = new Map<number, number>();
 
-      const counts = new Map<number, number>();
-      for (const row of (itemsResult.data ?? []) as ItemRef[]) {
-        counts.set(row.list_id, (counts.get(row.list_id) ?? 0) + 1);
-      }
+        if (ids.length > 0) {
+          const itemsResult = await client
+            .from("list_items")
+            .select("list_id")
+            .in("list_id", ids);
 
-      const rows = (listsResult.data ?? []) as ListRow[];
-      const nextLists = rows.map((row) => ({
-        id: row.id,
-        title: row.title,
-        createdAt: row.created_at,
-        itemCount: counts.get(row.id) ?? 0,
-      }));
-      setLists(nextLists);
-      setCount(nextLists.length);
-    });
+          if (cancelled) return;
+
+          if (itemsResult.error) {
+            setError(itemsResult.error.message);
+          } else {
+            setError(null);
+            for (const row of (itemsResult.data ?? []) as ItemRef[]) {
+              counts.set(row.list_id, (counts.get(row.list_id) ?? 0) + 1);
+            }
+          }
+        } else {
+          setError(null);
+        }
+
+        const nextLists = rows.map((row) => ({
+          id: row.id,
+          title: row.title,
+          createdAt: row.created_at,
+          itemCount: counts.get(row.id) ?? 0,
+        }));
+        setLists(nextLists);
+        setCount(nextLists.length);
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [setCount]);
+  }, [setCount, user]);
 
   const handleSaveTitle = async (listId: number, title: string) => {
     if (!supabase) return;
@@ -81,6 +95,7 @@ const List = () => {
       .from("lists")
       .update({ title })
       .eq("id", listId)
+      .eq("created_by", user?.id ?? "")
       .select("id, title")
       .single();
 
@@ -118,6 +133,7 @@ const List = () => {
       .from("lists")
       .delete()
       .eq("id", listId)
+      .eq("created_by", user?.id ?? "")
       .select("id");
 
     if (deleteError) {
