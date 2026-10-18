@@ -95,7 +95,7 @@
 }
 
 .auth-login {
-  justify-content: center;
+  justify-content: flex-start;
   padding: 28px 22px 40px;
   background:
     radial-gradient(circle at top right, var(--primary-tint), transparent 42%),
@@ -165,7 +165,7 @@
 }
 
 .auth-register form {
-  margin-top: auto;
+  margin-top: 0;
   padding: 22px 22px 8px;
   background: var(--surface);
   border-radius: 28px 28px 0 0;
