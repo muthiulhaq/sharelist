@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AddNewItem from "../../../components/AddNewItem";
 import ConfirmDialog from "../../../components/ConfirmDialog";
+import { useAuth } from "../../../auth";
 import { supabase } from "../../../lib/supabase";
 import { useListCount } from "../../../listCount";
 import type { IListDetailsItem } from "../../../types";
@@ -38,6 +39,7 @@ const ListDetails = () => {
   const draftTitle =
     (location.state as DraftLocationState | null)?.draftTitle?.trim() ?? "";
   const isDraft = !id && draftTitle.length > 0;
+  const { user } = useAuth();
   const { setDetail } = useListCount();
   const [listTitle, setListTitle] = useState(draftTitle);
   const [listDetailItemsData, setListDetailItemsData] = useState<
@@ -198,7 +200,11 @@ const ListDetails = () => {
 
     const { data: list, error: listError } = await supabase
       .from("lists")
-      .insert({ title: draftTitle })
+      .insert({
+        title: draftTitle,
+        created_by: user?.id ?? null,
+        created_by_email: user?.email ?? null,
+      })
       .select("id")
       .single();
 
