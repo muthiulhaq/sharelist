@@ -7,7 +7,7 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div>
+      <div className="header-copy">
         <h2>My Lists</h2>
         <span>
           {count} {label}

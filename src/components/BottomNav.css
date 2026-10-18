@@ -53,8 +53,10 @@
 }
 
 .bottom-nav .fab {
-  flex-direction: row;
-  gap: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 0;
   background: var(--primary);
   color: var(--on-primary);
 }

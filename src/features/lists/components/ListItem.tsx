@@ -95,13 +95,19 @@ const ListItem = ({
               </button>
             )}
           </div>
-
-          {itemCount > 0 && <span className="badge">{itemCount}</span>}
         </div>
 
-        <p>
-          <i className="fa-regular fa-calendar"></i>
-          {formatListDate(createdAt)}
+        <p className="card-meta">
+          <span className="card-date">
+            <i className="fa-regular fa-calendar"></i>
+            {formatListDate(createdAt)}
+          </span>
+          {itemCount > 0 && (
+            <span className="card-count">
+              <i className="fa-solid fa-list-ul"></i>
+              {itemCount} {itemCount === 1 ? "item" : "items"}
+            </span>
+          )}
         </p>
       </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ConfirmDialog from "../../../components/ConfirmDialog";
 import Search from "../../../components/Search";
 import { supabase } from "../../../lib/supabase";
 import { useListCount } from "../../../listCount";
@@ -20,6 +21,7 @@ type ItemRef = {
 const List = () => {
   const [lists, setLists] = useState<IListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<IListItem | null>(null);
   const { setCount } = useListCount();
 
   useEffect(() => {
@@ -137,6 +139,18 @@ const List = () => {
 
   return (
     <>
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this list?"
+          message={`“${pendingDelete.title}” and its items will be removed.`}
+          onCancel={() => setPendingDelete(null)}
+          onConfirm={() => {
+            const listId = pendingDelete.id;
+            setPendingDelete(null);
+            handleDeleteList(listId);
+          }}
+        ></ConfirmDialog>
+      )}
       <Search></Search>
       <main className="content">
         {error && <p className="lists-error">{error}</p>}
@@ -148,7 +162,10 @@ const List = () => {
             createdAt={item.createdAt}
             itemCount={item.itemCount}
             onSave={handleSaveTitle}
-            onDelete={handleDeleteList}
+            onDelete={(listId) => {
+              const list = lists.find((item) => item.id === listId);
+              if (list) setPendingDelete(list);
+            }}
           />
         ))}
       </main>

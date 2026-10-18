@@ -17,10 +17,12 @@ const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete}: ILis
         <div className="item-left">
           <div className="item-title">{title}</div>
 
-          <div className="item-note">
-            <i className="fa-solid fa-triangle-exclamation"></i>
-            {notes}
-          </div>
+          {notes.trim() && (
+            <div className="item-note">
+              <i className="fa-solid fa-triangle-exclamation"></i>
+              {notes}
+            </div>
+          )}
         </div>
 
         <div className="item-right">

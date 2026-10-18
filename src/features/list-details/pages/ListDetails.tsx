@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import AddNewItem from "../../../components/AddNewItem";
+import ConfirmDialog from "../../../components/ConfirmDialog";
 import { supabase } from "../../../lib/supabase";
 import type { IListDetailsItem } from "../../../types";
 import ListDetailItem from "../components/ListDetailItem";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./ListDetails.css";
 import ItemEditModal from "../components/ItemEditModal";
+
+type DraftLocationState = {
+  draftTitle?: string;
+};
 
 type ListItemRow = {
   id: number;
@@ -27,6 +32,11 @@ function mapRow(row: ListItemRow): IListDetailsItem {
 
 const ListDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const draftTitle =
+    (location.state as DraftLocationState | null)?.draftTitle?.trim() ?? "";
+  const isDraft = !id && draftTitle.length > 0;
   const [listDetailItemsData, setListDetailItemsData] = useState<
     IListDetailsItem[]
   >([]);
@@ -34,6 +44,14 @@ const ListDetails = () => {
     null
   );
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<IListDetailsItem | null>(null);
+
+  useEffect(() => {
+    if (!id && !draftTitle) {
+      navigate("/", { replace: true });
+    }
+  }, [id, draftTitle, navigate]);
 
   useEffect(() => {
     if (!id) {
@@ -144,6 +162,50 @@ const ListDetails = () => {
     setSelectedItem((current) => (current?.id === itemId ? null : current));
   };
 
+  const handleSaveList = async () => {
+    if (!supabase || !isDraft || saving) return;
+
+    setSaving(true);
+    setError(null);
+
+    const { data: list, error: listError } = await supabase
+      .from("lists")
+      .insert({ title: draftTitle })
+      .select("id")
+      .single();
+
+    if (listError || !list) {
+      setError(
+        listError?.message ??
+          "Could not create this list. Allow insert on lists for the anon role."
+      );
+      setSaving(false);
+      return;
+    }
+
+    if (listDetailItemsData.length > 0) {
+      const { error: itemsError } = await supabase.from("list_items").insert(
+        listDetailItemsData.map((item) => ({
+          list_id: list.id,
+          title: item.title,
+          quantity: item.quantity,
+          unit: item.unit,
+          notes: item.notes,
+        }))
+      );
+
+      if (itemsError) {
+        await supabase.from("lists").delete().eq("id", list.id);
+        setError(itemsError.message);
+        setSaving(false);
+        return;
+      }
+    }
+
+    setSaving(false);
+    navigate("/");
+  };
+
   const handleAddedItem = async (value: string) => {
     if (!supabase || !id) {
       setListDetailItemsData((prev) => [
@@ -184,6 +246,18 @@ const ListDetails = () => {
 
   return (
     <>
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this item?"
+          message={`“${pendingDelete.title}” will be removed from this list.`}
+          onCancel={() => setPendingDelete(null)}
+          onConfirm={() => {
+            const itemId = pendingDelete.id;
+            setPendingDelete(null);
+            handleDeleteItem(itemId);
+          }}
+        ></ConfirmDialog>
+      )}
       {selectedItem && (
         <ItemEditModal
           item={selectedItem}
@@ -192,7 +266,8 @@ const ListDetails = () => {
         ></ItemEditModal>
       )}
       <AddNewItem onSend={handleAddedItem}></AddNewItem>
-      <main className="list-area">
+      <main className={isDraft ? "list-area list-area-draft" : "list-area"}>
+        {isDraft && <h2 className="draft-name">{draftTitle}</h2>}
         {error && <p className="list-items-error">{error}</p>}
         {listDetailItemsData.map((item) => (
           <ListDetailItem
@@ -203,10 +278,21 @@ const ListDetails = () => {
             unit={item.unit}
             notes={item.notes}
             onSelect={() => setSelectedItem(item)}
-            onDelete={() => handleDeleteItem(item.id)}
+            onDelete={() => setPendingDelete(item)}
           ></ListDetailItem>
         ))}
       </main>
+      {isDraft && (
+        <button
+          type="button"
+          className="save-list-btn"
+          onClick={handleSaveList}
+          disabled={saving}
+        >
+          <i className="fa-solid fa-check"></i>
+          {saving ? "Saving..." : "Save"}
+        </button>
+      )}
     </>
   );
 };
