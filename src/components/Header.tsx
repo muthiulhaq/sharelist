@@ -1,13 +1,14 @@
 import { useState } from "react";
 import "./Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../lib/supabase";
+import { useAuth } from "../auth";
 import { useListCount } from "../listCount";
 
 const Header = () => {
   const { count, detail } = useListCount();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const isDetail = location.pathname.startsWith("/list");
   const [menuOpen, setMenuOpen] = useState(false);
   const itemCount = detail?.itemCount ?? 0;
@@ -54,7 +55,7 @@ const Header = () => {
               <div className="header-menu">
                 <button type="button" onClick={() => setMenuOpen(false)}>
                   <i className="fa-regular fa-user"></i>
-                  Profile
+                  {user?.email ?? "Profile"}
                 </button>
                 <button type="button" onClick={() => setMenuOpen(false)}>
                   <i className="fa-regular fa-comment"></i>
@@ -64,7 +65,7 @@ const Header = () => {
                   type="button"
                   onClick={async () => {
                     setMenuOpen(false);
-                    await supabase?.auth.signOut();
+                    await signOut();
                   }}
                 >
                   <i className="fa-solid fa-right-from-bracket"></i>
