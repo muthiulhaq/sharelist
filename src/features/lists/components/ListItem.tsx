@@ -45,6 +45,28 @@ const ListItem = ({
     setEditing(false);
   };
 
+  const shareList = async () => {
+    const url = new URL(
+      `list/${id}`,
+      window.location.origin + import.meta.env.BASE_URL,
+    ).href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text: title, url });
+        return;
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+    }
+
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(`${title}\n${url}`)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+  };
+
   return (
     <div className="card" onClick={() => navigate(`/list/${id}`)}>
       <div className="card-info">
@@ -112,7 +134,7 @@ const ListItem = ({
       </div>
 
       <div className="actions" onClick={(event) => event.stopPropagation()}>
-        <button type="button">
+        <button type="button" title="Share" onClick={shareList}>
           <i className="fas fa-share"></i>
         </button>
 
