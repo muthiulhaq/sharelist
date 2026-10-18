@@ -5,10 +5,21 @@ interface ListItemProps {
   id: number;
   title: string;
   createdAt: string;
-  itemCount: number;
+  itemCount?: number;
 }
 
-const ListItem = ({ id, title, createdAt, itemCount }: ListItemProps) => {
+function formatListDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+const ListItem = ({ id, title, createdAt, itemCount = 0 }: ListItemProps) => {
   const navigate = useNavigate();
 
   return (
@@ -16,15 +27,15 @@ const ListItem = ({ id, title, createdAt, itemCount }: ListItemProps) => {
       <div className="card-info">
         <div className="title-row">
           <h3>
-            {title} - {id}
+            {title}
           </h3>
 
-          <span className="badge">{itemCount}</span>
+          {itemCount > 0 && <span className="badge">{itemCount}</span>}
         </div>
 
         <p>
           <i className="fa-regular fa-calendar"></i>
-          {createdAt}
+          {formatListDate(createdAt)}
         </p>
       </div>
 

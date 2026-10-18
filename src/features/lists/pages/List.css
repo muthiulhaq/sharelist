@@ -1,3 +1,10 @@
+.lists-error {
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .content {
   position: absolute;
 
@@ -16,4 +23,7 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.fa-calendar {
+  margin-right: 4px;
+}
 
