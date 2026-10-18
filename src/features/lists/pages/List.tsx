@@ -11,6 +11,7 @@ import "./List.css";
 
 type ListRow = {
   id: number;
+  share_id: string;
   title: string;
   created_at: string;
 };
@@ -38,7 +39,7 @@ const List = () => {
 
     client
       .from("lists")
-      .select("id, title, created_at")
+      .select("id, share_id, title, created_at")
       .eq("created_by", user.id)
       .order("created_at", { ascending: false })
       .then(async (listsResult) => {
@@ -75,6 +76,7 @@ const List = () => {
 
         const nextLists = rows.map((row) => ({
           id: row.id,
+          shareId: row.share_id,
           title: row.title,
           createdAt: row.created_at,
           itemCount: counts.get(row.id) ?? 0,
@@ -182,6 +184,7 @@ const List = () => {
           <ListItem
             key={item.id}
             id={item.id}
+            shareId={item.shareId}
             title={item.title}
             createdAt={item.createdAt}
             itemCount={item.itemCount}

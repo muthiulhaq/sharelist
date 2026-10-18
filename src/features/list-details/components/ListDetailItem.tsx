@@ -8,12 +8,13 @@ interface IListDetailsItemProps {
   notes: string;
   onSelect: () => void;
   onDelete: () => void;
+  readOnly?: boolean;
 }
 
-const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete}: IListDetailsItemProps) => {
+const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete, readOnly = false}: IListDetailsItemProps) => {
   return (
     <>
-      <div className="list-item" onClick={onSelect}>
+      <div className="list-item" onClick={readOnly ? undefined : onSelect}>
         <div className="item-left">
           <div className="item-title">{title}</div>
 
@@ -30,6 +31,7 @@ const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete}: ILis
             {quantity}<span>{unit}</span>
           </div>
 
+          {!readOnly && (
           <div className="item-actions">
             <button
               type="button"
@@ -54,6 +56,7 @@ const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete}: ILis
               <i className="fa-solid fa-trash"></i>
             </button>
           </div>
+          )}
         </div>
       </div>
 

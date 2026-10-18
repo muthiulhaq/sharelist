@@ -1,5 +1,6 @@
 export interface IListItem {
   id: number;
+  shareId: string;
   title: string;
   createdAt: string;
   itemCount: number;
