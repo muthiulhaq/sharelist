@@ -59,23 +59,59 @@ const ListDetails = () => {
   }, [id, draftTitle, navigate]);
 
   useEffect(() => {
-    if (!id || !supabase) return;
+    if (!id || !supabase || !user) return;
 
+    const client = supabase;
     let cancelled = false;
 
-    supabase
+    client
       .from("lists")
       .select("title")
       .eq("id", Number(id))
-      .single()
-      .then(({ data }) => {
-        if (!cancelled && data?.title) setListTitle(data.title);
+      .eq("created_by", user.id)
+      .maybeSingle()
+      .then(async ({ data, error: listError }) => {
+        if (cancelled) return;
+
+        if (listError) {
+          setError(listError.message);
+          setListDetailItemsData([]);
+          return;
+        }
+
+        if (!data?.title) {
+          setListTitle("");
+          setListDetailItemsData([]);
+          setError("You can only open lists you created.");
+          return;
+        }
+
+        setListTitle(data.title);
+
+        const itemsResult = await client
+          .from("list_items")
+          .select("id, title, quantity, unit, notes")
+          .eq("list_id", Number(id))
+          .order("id", { ascending: false });
+
+        if (cancelled) return;
+
+        if (itemsResult.error) {
+          setError(itemsResult.error.message);
+          setListDetailItemsData([]);
+          return;
+        }
+
+        setError(null);
+        setListDetailItemsData(
+          (itemsResult.data ?? []).map((row) => mapRow(row as ListItemRow)),
+        );
       });
 
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     const title = isDraft ? draftTitle : listTitle;
@@ -85,41 +121,6 @@ const ListDetails = () => {
 
     return () => setDetail(null);
   }, [isDraft, draftTitle, listTitle, listDetailItemsData.length, setDetail]);
-
-  useEffect(() => {
-    if (!id) return;
-
-    if (!supabase) {
-      setError(
-        "Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env, then restart the dev server."
-      );
-      return;
-    }
-
-    let cancelled = false;
-
-    supabase
-      .from("list_items")
-      .select("id, title, quantity, unit, notes")
-      .eq("list_id", Number(id))
-      .order("id", { ascending: false })
-      .then(({ data, error: queryError }) => {
-        if (cancelled) return;
-
-        if (queryError) {
-          setError(queryError.message);
-          setListDetailItemsData([]);
-          return;
-        }
-
-        setError(null);
-        setListDetailItemsData((data ?? []).map((row) => mapRow(row as ListItemRow)));
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
 
   const handleSaveItem = async (item: IListDetailsItem) => {
     if (!supabase || !id) {
