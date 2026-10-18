@@ -22,6 +22,7 @@ const List = () => {
   const [lists, setLists] = useState<IListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<IListItem | null>(null);
+  const [query, setQuery] = useState("");
   const { setCount } = useListCount();
 
   useEffect(() => {
@@ -137,6 +138,10 @@ const List = () => {
     });
   };
 
+  const visibleLists = lists.filter((item) =>
+    item.title.toLowerCase().includes(query.trim().toLowerCase()),
+  );
+
   return (
     <>
       {pendingDelete && (
@@ -151,10 +156,13 @@ const List = () => {
           }}
         ></ConfirmDialog>
       )}
-      <Search></Search>
+      <Search value={query} onChange={setQuery}></Search>
       <main className="content">
         {error && <p className="lists-error">{error}</p>}
-        {lists.map((item) => (
+        {query.trim() && visibleLists.length === 0 && (
+          <p className="lists-empty">No lists match “{query.trim()}”.</p>
+        )}
+        {visibleLists.map((item) => (
           <ListItem
             key={item.id}
             id={item.id}

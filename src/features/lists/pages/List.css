@@ -1,3 +1,9 @@
+.lists-empty {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 .lists-error {
   margin-bottom: 12px;
   color: var(--text-muted);
@@ -22,8 +28,3 @@
 
   -webkit-overflow-scrolling: touch;
 }
-
-.fa-calendar {
-  margin-right: 4px;
-}
-

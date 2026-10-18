@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddNewItem from "../../../components/AddNewItem";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import { supabase } from "../../../lib/supabase";
+import { useListCount } from "../../../listCount";
 import type { IListDetailsItem } from "../../../types";
 import ListDetailItem from "../components/ListDetailItem";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -37,6 +38,8 @@ const ListDetails = () => {
   const draftTitle =
     (location.state as DraftLocationState | null)?.draftTitle?.trim() ?? "";
   const isDraft = !id && draftTitle.length > 0;
+  const { setDetail } = useListCount();
+  const [listTitle, setListTitle] = useState(draftTitle);
   const [listDetailItemsData, setListDetailItemsData] = useState<
     IListDetailsItem[]
   >([]);
@@ -54,10 +57,35 @@ const ListDetails = () => {
   }, [id, draftTitle, navigate]);
 
   useEffect(() => {
-    if (!id) {
-      setListDetailItemsData([]);
-      return;
-    }
+    if (!id || !supabase) return;
+
+    let cancelled = false;
+
+    supabase
+      .from("lists")
+      .select("title")
+      .eq("id", Number(id))
+      .single()
+      .then(({ data }) => {
+        if (!cancelled && data?.title) setListTitle(data.title);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    const title = isDraft ? draftTitle : listTitle;
+    if (!title) return;
+
+    setDetail({ title, itemCount: listDetailItemsData.length });
+
+    return () => setDetail(null);
+  }, [isDraft, draftTitle, listTitle, listDetailItemsData.length, setDetail]);
+
+  useEffect(() => {
+    if (!id) return;
 
     if (!supabase) {
       setError(
@@ -267,7 +295,6 @@ const ListDetails = () => {
       )}
       <AddNewItem onSend={handleAddedItem}></AddNewItem>
       <main className={isDraft ? "list-area list-area-draft" : "list-area"}>
-        {isDraft && <h2 className="draft-name">{draftTitle}</h2>}
         {error && <p className="list-items-error">{error}</p>}
         {listDetailItemsData.map((item) => (
           <ListDetailItem
