@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./ListItem.css";
 import { useNavigate } from "react-router-dom";
 
@@ -6,6 +7,8 @@ interface ListItemProps {
   title: string;
   createdAt: string;
   itemCount?: number;
+  onSave: (id: number, title: string) => void;
+  onDelete: (id: number) => void;
 }
 
 function formatListDate(value: string) {
@@ -19,16 +22,79 @@ function formatListDate(value: string) {
   }).format(date);
 }
 
-const ListItem = ({ id, title, createdAt, itemCount = 0 }: ListItemProps) => {
+const ListItem = ({
+  id,
+  title,
+  createdAt,
+  itemCount = 0,
+  onSave,
+  onDelete,
+}: ListItemProps) => {
   const navigate = useNavigate();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(title);
+
+  useEffect(() => {
+    if (!editing) setDraft(title);
+  }, [title, editing]);
+
+  const save = () => {
+    const nextTitle = draft.trim();
+    if (!nextTitle) return;
+    onSave(id, nextTitle);
+    setEditing(false);
+  };
 
   return (
     <div className="card" onClick={() => navigate(`/list/${id}`)}>
       <div className="card-info">
         <div className="title-row">
-          <h3>
-            {title}
-          </h3>
+          <div className="title-main">
+            {editing ? (
+              <input
+                className="title-input"
+                value={draft}
+                autoFocus
+                onClick={(event) => event.stopPropagation()}
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") save();
+                  if (event.key === "Escape") {
+                    setDraft(title);
+                    setEditing(false);
+                  }
+                }}
+              />
+            ) : (
+              <h3>{title}</h3>
+            )}
+
+            {editing ? (
+              <button
+                type="button"
+                className="title-action save"
+                title="Save"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  save();
+                }}
+              >
+                <i className="fa-solid fa-check"></i>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="title-action"
+                title="Edit"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setEditing(true);
+                }}
+              >
+                <i className="fa-solid fa-pen"></i>
+              </button>
+            )}
+          </div>
 
           {itemCount > 0 && <span className="badge">{itemCount}</span>}
         </div>
@@ -39,12 +105,17 @@ const ListItem = ({ id, title, createdAt, itemCount = 0 }: ListItemProps) => {
         </p>
       </div>
 
-      <div className="actions">
-        <button>
+      <div className="actions" onClick={(event) => event.stopPropagation()}>
+        <button type="button">
           <i className="fas fa-share"></i>
         </button>
 
-        <button className="delete">
+        <button
+          type="button"
+          className="delete"
+          title="Delete"
+          onClick={() => onDelete(id)}
+        >
           <i className="fas fa-trash"></i>
         </button>
       </div>

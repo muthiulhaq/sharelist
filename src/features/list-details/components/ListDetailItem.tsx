@@ -7,9 +7,10 @@ interface IListDetailsItemProps {
   unit: string;
   notes: string;
   onSelect: () => void;
+  onDelete: () => void;
 }
 
-const ListDetailItem = ({title, quantity, unit, notes, onSelect}: IListDetailsItemProps) => {
+const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete}: IListDetailsItemProps) => {
   return (
     <>
       <div className="list-item" onClick={onSelect}>
@@ -28,11 +29,26 @@ const ListDetailItem = ({title, quantity, unit, notes, onSelect}: IListDetailsIt
           </div>
 
           <div className="item-actions">
-            <button title="Edit">
+            <button
+              type="button"
+              title="Edit"
+              onClick={(event) => {
+                event.stopPropagation();
+                onSelect();
+              }}
+            >
               <i className="fa-solid fa-pen"></i>
             </button>
 
-            <button className="delete" title="Delete">
+            <button
+              type="button"
+              className="delete"
+              title="Delete"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+            >
               <i className="fa-solid fa-trash"></i>
             </button>
           </div>

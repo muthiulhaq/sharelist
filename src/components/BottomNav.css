@@ -51,3 +51,14 @@
 .bottom-nav .active {
   color: var(--primary);
 }
+
+.bottom-nav .fab {
+  flex-direction: row;
+  gap: 0;
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.bottom-nav .fab i {
+  font-size: 22px;
+}

@@ -1,5 +1,6 @@
 import "./BottomNav.css";
 import { useNavigate } from "react-router-dom";
+import NewListButton from "./NewListButton";
 
 export const BottomNav = () => {
   const navigate = useNavigate();
@@ -11,12 +12,9 @@ export const BottomNav = () => {
         <span>Lists</span>
       </button>
 
-      <button>
-        <i className="fas fa-users"></i>
-        <span>Shared</span>
-      </button>
+      <NewListButton></NewListButton>
 
-      <button >
+      <button>
         <i className="fas fa-user"></i>
         <span>Profile</span>
       </button>

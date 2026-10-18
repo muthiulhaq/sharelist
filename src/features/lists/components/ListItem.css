@@ -39,10 +39,48 @@
   gap: 12px;
 }
 
+.title-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
 .title-row h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  min-width: 0;
+}
+
+.title-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.title-action {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--ink-700);
+  cursor: pointer;
+}
+
+.title-action.save {
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
 .badge {
