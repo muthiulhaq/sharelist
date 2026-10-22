@@ -9,29 +9,38 @@ const AuthScreen = () => {
   const { signIn, signUp } = useAuth();
   const isRegister = location.pathname === "/register";
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [invalidEmail, setInvalidEmail] = useState(false);
+  const [invalidPhone, setInvalidPhone] = useState(false);
   const [invalidPassword, setInvalidPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const nextEmail = email.trim();
+    const nextPhone = phone.trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail);
+    const phoneOk = !isRegister || nextPhone.replace(/\D/g, "").length >= 8;
     const passwordOk = password.length >= 6;
     setInvalidEmail(!emailOk);
+    setInvalidPhone(isRegister && !phoneOk);
     setInvalidPassword(!passwordOk);
 
-    if (!emailOk || !passwordOk) {
-      setError("Enter a valid email and a password of at least 6 characters.");
+    if (!emailOk || !phoneOk || !passwordOk) {
+      setError(
+        isRegister
+          ? "Enter a valid email, phone number, and a password of at least 6 characters."
+          : "Enter a valid email and a password of at least 6 characters.",
+      );
       return;
     }
 
     setSubmitting(true);
     setError(null);
     const message = isRegister
-      ? await signUp(nextEmail, password)
+      ? await signUp(nextEmail, password, nextPhone)
       : await signIn(nextEmail, password);
     setSubmitting(false);
 
@@ -68,6 +77,22 @@ const AuthScreen = () => {
             }}
           />
         </label>
+        {isRegister && (
+          <label>
+            Phone number
+            <input
+              type="tel"
+              autoComplete="tel"
+              placeholder="Phone number"
+              className={invalidPhone ? "invalid" : undefined}
+              value={phone}
+              onChange={(event) => {
+                setPhone(event.target.value);
+                setInvalidPhone(false);
+              }}
+            />
+          </label>
+        )}
         <label>
           Password
           <input

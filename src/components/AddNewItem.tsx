@@ -29,8 +29,8 @@ const AddNewItem = ({ onSend }: AddNewItemProp) => {
         }}
       />
 
-      <button className="next-btn" onClick={handleSend}>
-        <i className="fa-solid fa-arrow-right"></i>
+      <button className="next-btn" type="button" onClick={handleSend}>
+        + Add
       </button>
     </div>
   );

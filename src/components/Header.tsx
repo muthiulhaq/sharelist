@@ -6,7 +6,7 @@ import FeedbackForm from "./FeedbackForm";
 import { useListCount } from "../listCount";
 
 const Header = () => {
-  const { count, detail } = useListCount();
+  const { count, detail, backAction } = useListCount();
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
@@ -25,7 +25,13 @@ const Header = () => {
           type="button"
           className="icon-btn"
           title="Back"
-          onClick={() => navigate("/")}
+          onClick={() => {
+            if (backAction.current) {
+              backAction.current();
+              return;
+            }
+            navigate("/");
+          }}
         >
           <i className="fas fa-arrow-left"></i>
         </button>

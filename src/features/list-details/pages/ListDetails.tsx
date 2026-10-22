@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddNewItem from "../../../components/AddNewItem";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import { useAuth } from "../../../auth";
@@ -26,8 +26,8 @@ function mapRow(row: ListItemRow): IListDetailsItem {
   return {
     id: row.id,
     title: row.title,
-    quantity: row.quantity ?? 0,
-    unit: row.unit ?? "",
+    quantity: row.quantity != null && row.quantity > 0 ? row.quantity : null,
+    unit: row.unit?.trim() ?? "",
     notes: row.notes ?? "",
   };
 }
@@ -47,7 +47,8 @@ const ListDetails = () => {
     (location.state as DraftLocationState | null)?.draftTitle?.trim() ?? "";
   const isDraft = !shareId && draftTitle.length > 0;
   const { user } = useAuth();
-  const { setDetail } = useListCount();
+  const { setDetail, backAction } = useListCount();
+  const saveListRef = useRef<() => void>(() => {});
   const [listTitle, setListTitle] = useState(draftTitle);
   const [listId, setListId] = useState<number | null>(null);
   const [ownerId, setOwnerId] = useState<string | null>(null);
@@ -131,7 +132,7 @@ const ListDetails = () => {
       .update({
         title: item.title,
         quantity: item.quantity,
-        unit: item.unit,
+        unit: item.unit.trim() || null,
         notes: item.notes,
       })
       .eq("id", item.id)
@@ -221,7 +222,7 @@ const ListDetails = () => {
           list_id: list.id,
           title: item.title,
           quantity: item.quantity,
-          unit: item.unit,
+          unit: item.unit.trim() || null,
           notes: item.notes,
         }))
       );
@@ -238,6 +239,15 @@ const ListDetails = () => {
     navigate("/");
   };
 
+  saveListRef.current = handleSaveList;
+
+  useEffect(() => {
+    backAction.current = isDraft ? () => saveListRef.current() : null;
+    return () => {
+      backAction.current = null;
+    };
+  }, [isDraft, backAction]);
+
   const handleAddedItem = async (value: string) => {
     if (readOnly) return;
 
@@ -246,8 +256,8 @@ const ListDetails = () => {
         {
           id: Date.now(),
           title: value,
-          quantity: 1,
-          unit: "Nos",
+          quantity: null,
+          unit: "",
           notes: "",
         },
         ...prev,
@@ -260,8 +270,8 @@ const ListDetails = () => {
       .insert({
         list_id: listId,
         title: value,
-        quantity: 1,
-        unit: "Nos",
+        quantity: null,
+        unit: null,
         notes: "",
       })
       .select("id, title, quantity, unit, notes")

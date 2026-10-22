@@ -9,7 +9,7 @@ export interface IListItem {
 export interface IListDetailsItem {
   id: number;
   title: string;
-  quantity: number;
+  quantity: number | null;
   unit: string;
   notes: string;
 }

@@ -3,7 +3,7 @@ import "./ListDetailItem.css";
 interface IListDetailsItemProps {
   id: number;
   title: string;
-  quantity: number;
+  quantity: number | null;
   unit: string;
   notes: string;
   onSelect: () => void;
@@ -12,6 +12,9 @@ interface IListDetailsItemProps {
 }
 
 const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete, readOnly = false}: IListDetailsItemProps) => {
+  const showQuantity = quantity != null && quantity > 0;
+  const showUnit = unit.trim().length > 0;
+
   return (
     <>
       <div className="list-item" onClick={readOnly ? undefined : onSelect}>
@@ -27,9 +30,12 @@ const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete, readO
         </div>
 
         <div className="item-right">
-          <div className="qty">
-            {quantity}<span>{unit}</span>
-          </div>
+          {(showQuantity || showUnit) && (
+            <div className="qty">
+              {showQuantity && quantity}
+              {showUnit && <span>{unit}</span>}
+            </div>
+          )}
 
           {!readOnly && (
           <div className="item-actions">

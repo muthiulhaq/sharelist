@@ -12,22 +12,27 @@ interface IItemEditModalProps {
 
 export const ItemEditModal = ({ item, onClose, onSave }: IItemEditModalProps) => {
   const [title, setTitle] = useState(item.title);
-  const [quantity, setQuantity] = useState(String(item.quantity));
-  const [unit, setUnit] = useState(item.unit || "Nos");
+  const [quantity, setQuantity] = useState(
+    item.quantity != null && item.quantity > 0 ? String(item.quantity) : ""
+  );
+  const [unit, setUnit] = useState(item.unit);
   const [notes, setNotes] = useState(item.notes);
-  const units = UNITS.includes(unit) ? UNITS : [unit, ...UNITS];
+  const units = unit && !UNITS.includes(unit) ? [unit, ...UNITS] : UNITS;
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     const nextTitle = title.trim();
     if (!nextTitle) return;
 
-    const nextQuantity = Number(quantity);
+    const parsedQuantity = quantity.trim() === "" ? null : Number(quantity);
     onSave({
       id: item.id,
       title: nextTitle,
-      quantity: Number.isFinite(nextQuantity) && nextQuantity > 0 ? nextQuantity : 1,
-      unit,
+      quantity:
+        parsedQuantity != null && Number.isFinite(parsedQuantity) && parsedQuantity > 0
+          ? parsedQuantity
+          : null,
+      unit: unit.trim(),
       notes: notes.trim(),
     });
   };
@@ -56,6 +61,7 @@ export const ItemEditModal = ({ item, onClose, onSave }: IItemEditModalProps) =>
               <input
                 type="number"
                 min={1}
+                placeholder="Optional"
                 value={quantity}
                 onChange={(event) => setQuantity(event.target.value)}
               />
@@ -65,8 +71,11 @@ export const ItemEditModal = ({ item, onClose, onSave }: IItemEditModalProps) =>
               <label>Unit</label>
 
               <select value={unit} onChange={(event) => setUnit(event.target.value)}>
+                <option value="">Optional</option>
                 {units.map((option) => (
-                  <option key={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
             </div>
