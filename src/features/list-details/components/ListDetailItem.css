@@ -4,26 +4,27 @@
 
 .list-item {
   display: flex;
-
   justify-content: space-between;
-
-  align-items: flex-start;
-
-  gap: 18px;
-
-  padding: 18px 0;
-
-  transition: 0.25s;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
 }
 
-.list-item:hover {
+.list-item:active {
   background: var(--primary-soft);
 }
 
-.divider {
-  height: 1px;
+.item-group .divider {
+  display: none;
+}
 
-  background: var(--border-soft);
+.item-group .divider + .list-item {
+  border-top: 0.5px solid var(--border-soft);
+}
+
+.divider {
+  height: 0;
 }
 
 .item-left {
@@ -32,32 +33,31 @@
 
 .item-title {
   font-size: 17px;
-
-  font-weight: 600;
-
-  line-height: 1.4;
-
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
   color: var(--text);
 }
 
 .item-note {
-  margin-top: 8px;
-
+  margin-top: 6px;
   display: flex;
-
-  align-items: flex-start;
-
-  gap: 8px;
-
-  color: var(--green-800);
-
+  align-items: center;
+  gap: 6px;
+  color: var(--error);
   font-size: 13px;
-
-  line-height: 1.5;
+  line-height: 16px;
 }
 
-.item-note i {
-  margin-top: 2px;
+.item-note svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  display: block;
+}
+
+.item-note span {
+  line-height: 16px;
 }
 
 .item-right {
@@ -70,14 +70,11 @@
 
 .qty {
   text-align: right;
-
   color: var(--primary);
-
-  font-size: 24px;
-
-  font-weight: 700;
-
-  min-width: 56px;
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
 }
 
 .qty span {

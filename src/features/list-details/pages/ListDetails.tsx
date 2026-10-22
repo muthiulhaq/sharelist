@@ -312,19 +312,23 @@ const ListDetails = () => {
       {!readOnly && <AddNewItem onSend={handleAddedItem}></AddNewItem>}
       <main className={isDraft ? "list-area list-area-draft" : readOnly ? "list-area list-area-readonly" : "list-area"}>
         {error && <p className="list-items-error">{error}</p>}
-        {listDetailItemsData.map((item) => (
-          <ListDetailItem
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            quantity={item.quantity}
-            unit={item.unit}
-            notes={item.notes}
-            readOnly={readOnly}
-            onSelect={() => setSelectedItem(item)}
-            onDelete={() => setPendingDelete(item)}
-          ></ListDetailItem>
-        ))}
+        {listDetailItemsData.length > 0 && (
+          <div className="item-group">
+            {listDetailItemsData.map((item) => (
+              <ListDetailItem
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                quantity={item.quantity}
+                unit={item.unit}
+                notes={item.notes}
+                readOnly={readOnly}
+                onSelect={() => setSelectedItem(item)}
+                onDelete={() => setPendingDelete(item)}
+              ></ListDetailItem>
+            ))}
+          </div>
+        )}
       </main>
       {isDraft && (
         <button

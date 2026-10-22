@@ -149,6 +149,7 @@ const ListItem = ({
           <i className="fas fa-trash"></i>
         </button>
       </div>
+      <i className="fa-solid fa-chevron-right card-chevron" aria-hidden="true"></i>
     </div>
   );
 };

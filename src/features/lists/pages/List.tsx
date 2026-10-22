@@ -20,11 +20,51 @@ type ItemRef = {
   list_id: number;
 };
 
+type DateFilter = "all" | "today" | "week" | "month";
+
+const DATE_FILTERS: { id: DateFilter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "today", label: "Today" },
+  { id: "week", label: "This week" },
+  { id: "month", label: "This month" },
+];
+
+function startOfDay(date: Date) {
+  const next = new Date(date);
+  next.setHours(0, 0, 0, 0);
+  return next;
+}
+
+function startOfWeek(date: Date) {
+  const next = startOfDay(date);
+  const day = next.getDay();
+  const mondayOffset = day === 0 ? 6 : day - 1;
+  next.setDate(next.getDate() - mondayOffset);
+  return next;
+}
+
+function startOfMonth(date: Date) {
+  const next = startOfDay(date);
+  next.setDate(1);
+  return next;
+}
+
+function matchesDate(createdAt: string, filter: DateFilter) {
+  if (filter === "all") return true;
+  const created = new Date(createdAt);
+  if (Number.isNaN(created.getTime())) return false;
+  const now = new Date();
+  if (filter === "today") return created >= startOfDay(now);
+  if (filter === "week") return created >= startOfWeek(now);
+  return created >= startOfMonth(now);
+}
+
 const List = () => {
   const [lists, setLists] = useState<IListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<IListItem | null>(null);
   const [query, setQuery] = useState("");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const { user } = useAuth();
   const { setCount } = useListCount();
 
@@ -156,9 +196,17 @@ const List = () => {
     });
   };
 
-  const visibleLists = lists.filter((item) =>
-    item.title.toLowerCase().includes(query.trim().toLowerCase()),
+  const visibleLists = lists.filter(
+    (item) =>
+      item.title.toLowerCase().includes(query.trim().toLowerCase()) &&
+      matchesDate(item.createdAt, dateFilter),
   );
+  const dateLabel = DATE_FILTERS.find((filter) => filter.id === dateFilter)?.label ?? "All";
+  const emptyMessage = query.trim()
+    ? `No lists match “${query.trim()}”${dateFilter === "all" ? "" : ` for ${dateLabel.toLowerCase()}`}.`
+    : dateFilter === "all"
+      ? "No lists yet."
+      : `No lists for ${dateLabel.toLowerCase()}.`;
 
   return (
     <>
@@ -175,10 +223,24 @@ const List = () => {
         ></ConfirmDialog>
       )}
       <Search value={query} onChange={setQuery}></Search>
+      <div className="date-filters" role="tablist" aria-label="Filter by date">
+        {DATE_FILTERS.map((filter) => (
+          <button
+            key={filter.id}
+            type="button"
+            role="tab"
+            aria-selected={dateFilter === filter.id}
+            className={dateFilter === filter.id ? "active" : undefined}
+            onClick={() => setDateFilter(filter.id)}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </div>
       <main className="content">
         {error && <p className="lists-error">{error}</p>}
-        {query.trim() && visibleLists.length === 0 && (
-          <p className="lists-empty">No lists match “{query.trim()}”.</p>
+        {!error && visibleLists.length === 0 && (
+          <p className="lists-empty">{emptyMessage}</p>
         )}
         {visibleLists.map((item) => (
           <ListItem

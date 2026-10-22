@@ -30,9 +30,9 @@
 
     overflow-y:auto;
 
-    background:var(--surface);
+    background:var(--bg);
 
-    border-radius:0 0 28px 28px;
+    border-radius:0 0 16px 16px;
 
     padding:18px;
 
@@ -162,9 +162,9 @@
 
 .form-group textarea{
 
-    border:1px solid var(--border);
+    border:none;
 
-    border-radius:14px;
+    border-radius:10px;
 
     padding:14px;
 
@@ -194,9 +194,7 @@
 
 .form-group textarea:focus{
 
-    border-color:var(--primary);
-
-    box-shadow:0 0 0 4px rgba(20,122,69,.10);
+    box-shadow:0 0 0 2px var(--primary);
 
 }
 
@@ -220,9 +218,9 @@
 
     border:none;
 
-    border-radius:14px;
+    border-radius:12px;
 
-    background:var(--danger-soft);
+    background:var(--surface);
 
     color:var(--danger);
 
@@ -240,7 +238,7 @@
 
     border:none;
 
-    border-radius:14px;
+    border-radius:12px;
 
     background:var(--primary);
 
@@ -260,7 +258,7 @@
 
 .save-btn{
 
-    height:52px;
+    height:50px;
     display:inline-flex;
     align-items:center;
     justify-content:center;
