@@ -1,27 +1,15 @@
 .card {
   background: var(--surface);
-
-  border: 1px solid var(--border-soft);
-
-  border-radius: 18px;
-
-  padding: 14px 16px;
-
-  margin-bottom: 14px;
-
+  padding: 14px 12px 14px 16px;
   display: flex;
-
-  justify-content: space-between;
-
   align-items: center;
-
-  box-shadow: var(--shadow-md);
-
-  transition: 0.2s;
+  gap: 8px;
+  border-radius: 14px;
+  cursor: pointer;
 }
 
-.card:hover {
-  border-color: var(--primary-tint);
+.card:active {
+  background: var(--primary-soft);
 }
 
 .card-info {
@@ -30,18 +18,16 @@
 }
 
 .card-info h3 {
-  font-size: 15px;
-
-  margin-bottom: 6px;
-
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--text);
 }
 
 .title-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .title-main {
@@ -54,35 +40,37 @@
 
 .title-row h3 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .title-input {
   flex: 1;
   min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 6px 10px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 10px;
   font: inherit;
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
-  background: var(--surface);
+  background: var(--ink-100);
 }
 
 .title-action {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   display: grid;
   place-items: center;
   padding: 0;
   border: none;
   border-radius: 8px;
-  background: var(--surface-muted);
-  color: var(--ink-700);
+  background: transparent;
+  color: var(--primary);
   cursor: pointer;
 }
 
@@ -95,8 +83,8 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px 16px;
-  margin-top: 8px;
+  gap: 6px 12px;
+  margin-top: 3px;
   color: var(--text-muted);
   font-size: 13px;
 }
@@ -105,44 +93,37 @@
 .card-count {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.card-chevron {
+  color: var(--ink-300);
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 2px;
 }
 
 .actions button {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
   padding: 0;
-
   border: none;
-
-  border-radius: 10px;
-
-  background: var(--surface-muted);
-
+  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
-
-  color: var(--ink-700);
-
-  transition: 0.2s;
+  color: var(--ink-500);
 }
 
-.actions button:hover {
-  background: var(--primary-soft);
-  color: var(--primary);
+.actions button:active {
+  background: var(--ink-100);
 }
 
 .delete {
-  color: var(--danger) !important;
-}
-
-.actions .delete:hover {
-  background: var(--danger);
-  color: var(--on-danger) !important;
+  color: var(--ink-700) !important;
 }

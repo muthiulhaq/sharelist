@@ -19,7 +19,7 @@ const Header = () => {
     : `${count} ${count === 1 ? "List" : "Lists"}`;
 
   return (
-    <header className="header">
+    <header className={isDetail ? "header header-detail" : "header"}>
       {isDetail && (
         <button
           type="button"
@@ -33,7 +33,7 @@ const Header = () => {
             navigate("/");
           }}
         >
-          <i className="fas fa-arrow-left"></i>
+          <i className="fas fa-chevron-left"></i>
         </button>
       )}
       <div className="header-copy">
@@ -90,6 +90,7 @@ const Header = () => {
           )}
         </div>
       )}
+      {isDetail && <span className="header-balance" aria-hidden="true" />}
       {feedbackOpen && <FeedbackForm onClose={() => setFeedbackOpen(false)} />}
     </header>
   );

@@ -1,30 +1,63 @@
 .lists-empty {
-  margin-top: 8px;
+  margin: 28px 8px 0;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 15px;
+  text-align: center;
 }
 
 .lists-error {
-  margin-bottom: 12px;
+  margin: 8px 4px 12px;
   color: var(--error);
   font-size: 14px;
   line-height: 1.4;
 }
 
+.date-filters {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 12px;
+  background: var(--bg);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.date-filters button {
+  flex: 0 0 auto;
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-700);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.date-filters button.active {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.date-filters button:active {
+  opacity: 0.7;
+}
+
 .content {
-  position: absolute;
-
-  top: 145px;
-  bottom: 78px;
-
-  left: 0;
-  right: 0;
-
-  padding: 8px 16px 16px;
-  flex: 1;
-
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 2px 16px 20px;
   overflow-y: auto;
   overflow-x: hidden;
-
+  background: var(--bg);
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
