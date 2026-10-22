@@ -9,15 +9,26 @@ interface IListDetailsItemProps {
   onSelect: () => void;
   onDelete: () => void;
   readOnly?: boolean;
+  marked?: boolean;
+  onToggle?: () => void;
 }
 
-const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete, readOnly = false}: IListDetailsItemProps) => {
+const ListDetailItem = ({title, quantity, unit, notes, onSelect, onDelete, readOnly = false, marked = false, onToggle}: IListDetailsItemProps) => {
   const showQuantity = quantity != null && quantity > 0;
   const showUnit = unit.trim().length > 0;
 
   return (
     <>
-      <div className="list-item" onClick={readOnly ? undefined : onSelect}>
+      <div
+        className={[
+          "list-item",
+          readOnly ? "list-item-shared" : "",
+          marked ? "list-item-marked" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        onClick={readOnly ? onToggle : onSelect}
+      >
         <div className="item-left">
           <div className="item-title">{title}</div>
 
