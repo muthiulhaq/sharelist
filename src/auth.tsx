@@ -12,7 +12,7 @@ type AuthValue = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<string | null>;
-  signUp: (email: string, password: string) => Promise<string | null>;
+  signUp: (email: string, password: string, phone: string) => Promise<string | null>;
   signOut: () => Promise<void>;
 };
 
@@ -50,12 +50,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error?.message ?? null;
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, phone: string) => {
     if (!supabase) return "Supabase is not configured.";
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { phone } },
+    });
     if (error) return error.message;
-    if (!data.session) return "Check your email to confirm your account, then log in.";
-    return null;
+    if (data.session) return null;
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (signInError?.message.toLowerCase().includes("confirm")) {
+      return "Email confirmation is still on in Supabase, so this account cannot sign in yet. Turn off Confirm email under Authentication, then register again.";
+    }
+    return signInError?.message ?? null;
   };
 
   const signOut = async () => {
