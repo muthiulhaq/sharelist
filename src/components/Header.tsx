@@ -15,7 +15,9 @@ const Header = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const itemCount = detail?.itemCount ?? 0;
   const subtitle = isDetail
-    ? `${itemCount} ${itemCount === 1 ? "item" : "items"}`
+    ? detail?.remaining != null
+      ? `${detail.remaining} remaining · ${itemCount} total`
+      : `${itemCount} ${itemCount === 1 ? "item" : "items"}`
     : `${count} ${count === 1 ? "List" : "Lists"}`;
 
   return (

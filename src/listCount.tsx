@@ -3,6 +3,7 @@ import { createContext, useContext, useRef, useState, type ReactNode } from "rea
 export type DetailHeader = {
   title: string;
   itemCount: number;
+  remaining?: number;
 };
 
 type ListCountValue = {

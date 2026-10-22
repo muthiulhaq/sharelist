@@ -22,6 +22,21 @@ type ListItemRow = {
   notes: string | null;
 };
 
+function checkedStorageKey(shareId: string) {
+  return `sharelist-checked:${shareId}`;
+}
+
+function readCheckedIds(shareId: string) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(checkedStorageKey(shareId)) ?? "[]");
+    return Array.isArray(parsed)
+      ? parsed.filter((id): id is number => typeof id === "number")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 function mapRow(row: ListItemRow): IListDetailsItem {
   return {
     id: row.id,
@@ -62,6 +77,11 @@ const ListDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<IListDetailsItem | null>(null);
+  const [checkedIds, setCheckedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    setCheckedIds(shareId ? readCheckedIds(shareId) : []);
+  }, [shareId]);
 
   useEffect(() => {
     if (!shareId && !draftTitle && user) {
@@ -112,10 +132,33 @@ const ListDetails = () => {
     const title = isDraft ? draftTitle : listTitle;
     if (!title) return;
 
-    setDetail({ title, itemCount: listDetailItemsData.length });
+    const remaining = readOnly
+      ? listDetailItemsData.filter((item) => !checkedIds.includes(item.id)).length
+      : undefined;
+
+    setDetail({ title, itemCount: listDetailItemsData.length, remaining });
 
     return () => setDetail(null);
-  }, [isDraft, draftTitle, listTitle, listDetailItemsData.length, setDetail]);
+  }, [
+    isDraft,
+    draftTitle,
+    listTitle,
+    listDetailItemsData,
+    checkedIds,
+    readOnly,
+    setDetail,
+  ]);
+
+  const toggleChecked = (itemId: number) => {
+    if (!shareId) return;
+    setCheckedIds((current) => {
+      const next = current.includes(itemId)
+        ? current.filter((id) => id !== itemId)
+        : [...current, itemId];
+      localStorage.setItem(checkedStorageKey(shareId), JSON.stringify(next));
+      return next;
+    });
+  };
 
   const handleSaveItem = async (item: IListDetailsItem) => {
     if (readOnly) return;
@@ -323,6 +366,8 @@ const ListDetails = () => {
                 unit={item.unit}
                 notes={item.notes}
                 readOnly={readOnly}
+                marked={readOnly && checkedIds.includes(item.id)}
+                onToggle={readOnly ? () => toggleChecked(item.id) : undefined}
                 onSelect={() => setSelectedItem(item)}
                 onDelete={() => setPendingDelete(item)}
               ></ListDetailItem>

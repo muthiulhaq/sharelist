@@ -20,15 +20,34 @@
 }
 
 .item-group .divider + .list-item {
-  border-top: 0.5px solid var(--border-soft);
+  border-top: 1px solid var(--ink-200);
 }
 
 .divider {
   height: 0;
 }
 
+.list-item-shared {
+  position: relative;
+}
+
+.list-item-marked {
+  background: var(--primary-soft);
+}
+
+.list-item-marked::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: var(--primary);
+}
+
 .item-left {
   flex: 1;
+  min-width: 0;
 }
 
 .item-title {
